@@ -1,150 +1,203 @@
-<h1 align="center"><a href="https://github.com/xkcoding" target="_blank">Spring Boot Demo</a></h1>
-<p align="center">
-  <a href="https://travis-ci.com/xkcoding/spring-boot-demo"><img alt="Travis-CI" src="https://travis-ci.com/xkcoding/spring-boot-demo.svg?branch=master"/></a>
-  <a href="https://www.codacy.com/app/xkcoding/spring-boot-demo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=xkcoding/spring-boot-demo&amp;utm_campaign=Badge_Grade"><img alt="Codacy" src="https://api.codacy.com/project/badge/Grade/1f2e3d437b174bfc943dae1600332ec1"/></a>
-  <a href="https://xkcoding.com"><img alt="author" src="https://img.shields.io/badge/author-Yangkai.Shen-blue.svg"/></a>
-  <a href="https://www.oracle.com/technetwork/java/javase/downloads/index.html"><img alt="JDK" src="https://img.shields.io/badge/JDK-1.8.0_162-orange.svg"/></a>
-  <a href="https://docs.spring.io/spring-boot/docs/2.1.0.RELEASE/reference/html/"><img alt="Spring Boot" src="https://img.shields.io/badge/Spring Boot-2.1.0.RELEASE-brightgreen.svg"/></a>
-  <a href="https://github.com/xkcoding/spring-boot-demo/blob/master/LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/xkcoding/spring-boot-demo.svg"/></a>
-</p>
+# Spring Boot Demo
 
-<p align="center">
-  <a href="https://github.com/xkcoding/spring-boot-demo/stargazers"><img alt="star" src="https://img.shields.io/github/stars/xkcoding/spring-boot-demo.svg?label=Stars&style=social"/></a>
-  <a href="https://github.com/xkcoding/spring-boot-demo/network/members"><img alt="star" src="https://img.shields.io/github/forks/xkcoding/spring-boot-demo.svg?label=Fork&style=social"/></a>
-  <a href="https://github.com/xkcoding/spring-boot-demo/watchers"><img alt="star" src="https://img.shields.io/github/watchers/xkcoding/spring-boot-demo.svg?label=Watch&style=social"/></a>
-</p>
+> Chinese documentation: [README.md](./README.md)
 
-<p align="center">
-  <span>English | <a href="./README.md">中文</a></span>
-</p>
+This repository is a collection of Spring Boot examples. The root `pom.xml`
+currently declares **62 top-level Maven modules**. Three of them
+(`demo-admin`, `demo-dubbo`, and `demo-oauth`) are aggregators containing seven
+children, for **66 leaf modules** in total. Module maturity varies and several
+directories are startup skeletons only. This catalog reflects the current
+POMs, source, and configuration; it does not imply that every demo has been
+runtime-tested.
 
-## Introduction
+## Baseline
 
-`spring boot demo` is a project for learning and practicing `spring boot`, including `66` demos, and `55` of them have been done.
+- Java 8 (the root POM compiles for `1.8`)
+- Spring Boot `2.1.0.RELEASE`
+- Maven 3.5+ (no Maven Wrapper is included)
+- UTF-8
 
-This project has integrated actuator (`monitoring`), admin (`visual monitoring`), logback (`log`), aopLog (`recording web request logs through AOP`), global exception handling (`json level and page level` ), freemarker (`template engine`), thymeleaf (`template engine`), Beetl (`template engine`), Enjoy (`template engine`), JdbcTemplate (`general JDBC operate database`), JPA (`powerful ORM framework `), mybatis (`powerful ORM framework`), Generic Mapper (`mybatis quick operation `), PageHelper (`powerful mybatis pagination plugin`), mybatis-plus (`mybatis quick operation`), BeetlSQL (`powerful ORM framework `), upload (`local file upload and qiniu cloud file upload`), redis (`cache`), ehcache (`cache`), email (`send various types of mail`), task (`basic scheduled tasks`), quartz (`dynamic management scheduled tasks`), xxl-job (`distributed scheduled tasks`), swagger (`API interface management and tests`), security (`RBAC-based Dynamic Rights Authentication`), SpringSession (`session sharing`), Zookeeper (`implement distributed locks by AOP`), RabbitMQ (`message queue`), Kafka (`message queue`), websocket (` server pushes the monitoring server status to front end `), socket.io (`chat room`), ureport2 (`Chinese-style report`), packaged into a `war` file, integrate ElasticSearch (`basic operations and advanced queries`), Async ( `asynchronous tasks`), integrated Dubbo (`with official starter`), MongoDB (`document database`), neo4j (`graph database`), docker (`container`), `JPA Multi-Datasource`, `Mybatis Multi-Datasource`, `code generator`', GrayLog (`log collection`), JustAuth (`third-party login`), LDAP(`CURD`), `Dynamically add/switch datasources`, Standalone RateLimiting(`AOP + Guava RateLimiter`), Distributed Ratelimiting(`AOP + Redis + Lua`), ElasticSearch 7.x(`use official Rest High Level Client`), HTTPS, Flyway(`initialize databases`),UReport2(`Chinese complex report `).
+This is a legacy stack. Prefer JDK 8; newer JDK or Maven releases may be
+incompatible with old plugins or dependencies.
 
-> If you have demos to contribute or needs to meet, it is very welcome to submit a [issue](https://github.com/xkcoding/spring-boot-demo/issues/new) and I will add it to my [TODO](./TODO.en.md) list.
+## Quick start
 
-## Branch Introduction
+Each example is an independent application. Build and run the module you need
+instead of treating the whole repository as a service-free test suite.
 
-- branch master: Based on Spring Boot version `2.1.0.RELEASE`. Every module's parent dependency is the pom.xml at root directory in convenience of managing common dependencies and learning spring boot.
-- branch v-1.5.x: Based on Spring Boot version `1.5.8.RELEASE`. Every module's parent dependency is spring-boot-demo-parent. But since the feedback shows that it is not much friendly to many new learners, this branch will not be mantained any more. All of the demos will be moved to branch master. Everyone could still study at this branch but it's suggested to study at branch master while Spring Boot has much new content over version `2.x`.
+```bash
+# From the repository root: build and test one module and its reactor dependencies
+mvn -pl demo-helloworld -am clean test
 
-## Environment
+# Package one module
+mvn -pl demo-helloworld -am clean package
 
-- **JDK 1.8 +**
-- **Maven 3.5 +**
-- **IntelliJ IDEA ULTIMATE 2018.2 +** (*Note: Please use IDEA and make sure plugin `lombok` installed.*)
-- **Mysql 5.7 +** (*Please use version 5.7 or higher because mysql has some new features and is not backward compatible at version 5.7. Althought this project will try to avoid this incompatibility*)
+# Run a simple module
+cd demo-helloworld
+mvn spring-boot:run
 
-## Getting Started
+# Or run its packaged executable JAR
+java -jar target/demo-helloworld.jar
+```
 
-> Note: If you has been forked this project, need to sync the project's code, please see: https://xkcoding.com/2018/09/18/how-to-update-the-fork-project.html
+Multi-service examples must be started separately:
 
-1. `git clone https://github.com/xkcoding/spring-boot-demo.git`
-2. Open the cloned project in IDEA
-3. Import the `pom.xml` file from the root directory using `Maven Projects` panel
-4. If you can not find `Maven Projects` panel, try to tick `View -> Tool Buttons` on and the `Maven Projects` panel will appear on the right side of IDEA.
-5. Find each Application class to run each module.
-6. **`Note: Each demo has a detailed README file. Remember to check it before running the demo~`**
-7. **`Note: In some condition you have to execute sql to prepare data before running demo, don't forget it~`**
+```bash
+# Spring Boot Admin: server first, then client
+cd demo-admin/admin-server && mvn spring-boot:run
+cd demo-admin/admin-client && mvn spring-boot:run
 
-## Stargazers over time
+# OAuth: authorization server first, then resource server
+cd demo-oauth/oauth-authorization-server && mvn spring-boot:run
+cd demo-oauth/oauth-resource-server && mvn spring-boot:run
+```
 
-[![Stargazers over time](https://starchart.cc/xkcoding/spring-boot-demo.svg)](https://starchart.cc/xkcoding/spring-boot-demo)
+Before starting a module, read its `README.md` and
+`src/main/resources/application*`. Database demos commonly require scripts
+under `db/`, `sql/`, `init/`, or `src/main/resources/db/`.
 
-## Appendix
+## External services and configuration
 
-### Recommended  Open source
+Services are required per module, not globally:
 
-- `JustAuth`：The most comprehensive open source library for third-party logins in history，https://github.com/justauth/JustAuth
-- `Mica`：Spring Boot microservices efficient development toolset，https://github.com/lets-mica/mica
-- `awesome-collector`：https://github.com/P-P-X/awesome-collector
-- `SpringBlade`：Complete micro-service online solution (required for enterprise development)，https://github.com/chillzhuang/SpringBlade
-- `Pig`：The universe's strongest micro-service certification authorized scaffolding (architect necessary)，https://github.com/pigxcloud/pig
+- MySQL for the ORM, multi-datasource, sharding, Quartz, Flyway, RBAC,
+  Activiti, and UReport2 examples
+- Redis for caching, Session, distributed rate limiting, RBAC Security, and
+  social login
+- Kafka, RabbitMQ, ZooKeeper, and an XXL-JOB admin service
+- Elasticsearch (both a legacy Spring Data example and a 7.x High Level
+  Client example), MongoDB, and Neo4j
+- SMTP, LDAP, Graylog and its supporting services
+- ZooKeeper as the registry for the Dubbo example
+- User-provided third-party credentials for social login, Qiniu upload, and
+  payment examples
 
-### TODO
+Configuration values are demonstration defaults; some are historical hosts or
+placeholders. Override endpoints and credentials locally, and never commit real
+secrets. Most web modules default to port `8080`, so change `server.port` when
+running several at once. See each module's configuration and README for special
+ports.
 
-View the [TODO](./TODO.en.md) file
+## Module catalog
 
-### Introduction of each Module
+The catalog follows the root `pom.xml`. Module links lead to detailed READMEs
+where one exists.
 
-| Module Name                                                  | Module Description                                           |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [demo-helloworld](./demo-helloworld)                         | a helloworld demo.                                           |
-| [demo-properties](./demo-properties)                         | a demo to read the contents of configuration file.           |
-| [demo-actuator](./demo-actuator)                             | a demo to integrate spring-boot-starter-actuator for monitoring the starting status and the running status of application. |
-| [demo-admin-client](./demo-admin/admin-client)               | a client demo to  integrate spring-boot-admin for visually monitoring the running status of application, it can be used with spring-boot-starter-actuator. |
-| [demo-admin-server](./demo-admin/admin-server)               | a server demo to  integrate spring-boot-admin for visually monitoring the running status of the spring-boot program, it can be used with spring-boot-starter-actuator. |
-| [demo-logback](./demo-logback)                               | a demo to integrate the logback for logging.                 |
-| [demo-log-aop](./demo-log-aop)                               | a demo to record web request logs using AOP aspect.          |
-| [demo-exception-handler](./demo-exception-handler)           | a demo to demonstrate global exception handling, including 2 types, the first one returns  json data, and the second one jumps to error page. |
-| [demo-template-freemarker](./demo-template-freemarker)       | a demo to integrate Freemarker template engine.              |
-| [demo-template-thymeleaf](./demo-template-thymeleaf)         | a demo to integrate Thymeleaf template engine.               |
-| [demo-template-beetl](./demo-template-beetl)                 | a demo to integrate Beetl template engine.                   |
-| [demo-template-enjoy](./demo-template-enjoy)                 | a demo to integrate Enjoy template engine.                   |
-| [demo-orm-jdbctemplate](./demo-orm-jdbctemplate)             | a demo to integrate the Jdbc Template for operating database and easily encapsulate the generic Dao layer. |
-| [demo-orm-jpa](./demo-orm-jpa)                               | a demo to integrate spring-boot-starter-data-jpa for operating database. |
-| [demo-orm-mybatis](./demo-orm-mybatis)                       | a demo to integrate native mybatis by using [mybatis-spring-boot-starter](https://github.com/mybatis/spring-boot-starter) dependency. |
-| [demo-orm-mybatis-mapper-page](./demo-orm-mybatis-mapper-page) | a demo to integrate [Mapper](https://github.com/abel533/Mapper) and [PageHelper](https://github.com/pagehelper/Mybatis-PageHelper) by using [mapper-spring-boot-starter](https://github.com/abel533/Mapper/tree/master/spring-boot-starter) and [pagehelper-spring-boot-starter](https://github.com/pagehelper/pagehelper-spring-boot) dependencies. |
-| [demo-orm-mybatis-plus](./demo-orm-mybatis-plus)             | a demo to integrate [mybatis-plus](https://mybatis.plus/en/) by using [mybatis-plus-boot-starter](http://mp.baomidou.com/) dependency, integrate BaseMapper / BaseService / ActiveRecord to operate database. |
-| [demo-orm-beetlsql](./demo-orm-beetlsql)                     | a demo to integrate [beetl-sql](http://ibeetl.com/guide/#beetlsql) by using [beetl-framework-starter](http://ibeetl.com/guide/#beetlsql) dependency. |
-| [demo-upload](./demo-upload)                                 | a file upload demo, including local file upload and qiniu cloud file upload. |
-| [demo-cache-redis](./demo-cache-redis)                       | a demo to integrate redis, operate data in redis, and use redis to cache data. |
-| [demo-cache-ehcache](./demo-cache-ehcache)                   | a demo to integrate ehcache, and use ehcache to cache data.  |
-| [demo-email](./demo-email)                                   | a demo to integrate email, including sending simple text email, HTML email (including template HTML email), attachment email, and static resource email. |
-| [demo-task](./demo-task)                                     | a demo to show easy to use scheduled task.                   |
-| [demo-task-quartz](./demo-task-quartz)                       | a demo to integrate quartz for managing scheduled tasks, including adding new scheduled tasks, deleting scheduled tasks, suspending scheduled tasks, restoring scheduled tasks, modifying scheduled task startup times, and timing task list queries, and `providing front-end pages`. |
-| [demo-task-xxl-job](./demo-task-xxl-job)                     | a demo to integrate [xxl-job](http://www.xuxueli.com/xxl-job/en/#/) for distributed scheduled tasks and provide methods to manage scheduled tasks bypass `xxl-job-admin`, including scheduled task lists, trigger lists, new scheduled tasks, deleted scheduled tasks, stopped scheduled tasks, and started scheduled tasks. Modify the scheduled task and manually trigger the scheduled task. |
-| [demo-swagger](./demo-swagger)                               | a demo to integrate native `swagger` to manage and test API interfaces. |
-| [demo-swagger-beauty](./demo-swagger-beauty)                 | a demo to integrate third part of swagger dependency [swagger-bootstrap-ui](https://github.com/xiaoymin/Swagger-Bootstrap-UI) to beautify document style and manage and test API interfaces. |
-| [demo-rbac-security](./demo-rbac-security)                   | a demo to integrate spring security implement privilege management based on RBAC privilege model, supports custom filtering request, dynamic privilege authentication, uses JWT security authentication, supports online population statistics, manually kicks out users, etc. |
-| [demo-rbac-shiro](./demo-rbac-shiro)                         | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate shiro for authentication management. |
-| [demo-session](./demo-session)                               | a demo to integrate Spring Session to implement Session sharing, restart program Session does not expire. |
-| [demo-oauth](./demo-oauth)                                   | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to implement the oauth server and  to implement oauth2 protocol such as the authorization code, access token. |
-| [demo-social](./demo-social)                                 | a demo to integrate third-party login by using `justauth-spring-boot-starter` dependency to achieve QQ login, GitHub login, WeChat login, Google login, Microsoft login, Xiaomi login, enterprise WeChat login. |
-| [demo-zookeeper](./demo-zookeeper)                           | a demo to integrate Zookeeper and AOP to implement distributed lock. |
-| [demo-mq-rabbitmq](./demo-mq-rabbitmq)                       | a demo to integrate RabbitMQ implementation for message delivery and reception based on direct queue mode, fanout mode, topic mode, delay queue. |
-| [demo-mq-rocketmq](./demo-mq-rocketmq)                       | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate RocketMQ implementation for message delivery and reception. |
-| [demo-mq-kafka](./demo-mq-kafka)                             | a demo to integrate Kafka implementation for message delivery and reception. |
-| [demo-websocket](./demo-websocket)                           | a demo to integrate websocket, the backend actively pushes the server running status to front end. |
-| [demo-websocket-socketio](./demo-websocket-socketio)         | a demo to integrate websocket by using `netty-socketio`, implement a simple chat room. |
-| [demo-ureport2](./demo-ureport2)                             | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate [ureport2](https://github.com/youseries/ureport) to implement complex, customized Chinese-style reports. |
-| [demo-uflo](./demo-uflo)                                     | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate [uflo](https://github.com/youseries/uflo)(process engine like Activiti and Flowable) to quickly implement a lightweight process engine. |
-| [demo-urule](./demo-urule)                                   | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate [urule](https://github.com/youseries/urule)(rule engine like drools) fast implementation rule engine. |
-| [demo-activiti](./demo-activiti)                             | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate Activiti 7 process engine. |
-| [demo-async](./demo-async)                                   | asynchronous execution of tasks by using natively provided asynchronous task support. |
-| [demo-war](./demo-war)                                       | packaged into a war format configuration                     |
-| [demo-elasticsearch](./demo-elasticsearch)                   | a demo to integrate ElasticSearch by using `spring-boot-starter-data-elasticsearch` to implement advanced techniques for using ElasticSearch, including creating indexes, configuring mappings, deleting indexes, adding and deleting basic operations, complex queries, advanced queries, aggregate queries, etc. |
-| [demo-dubbo](./demo-dubbo)                                   | a demo to integrate Dubbo, common module `spring-boot-demo-dubbo-common`, service provider `spring-boot-demo-dubbo-provider`, service consumer `spring-boot-demo-dubbo-consumer`. |
-| [demo-mongodb](./demo-mongodb)                               | a demo to integrate MongoDB and use the official starter to CRUD. |
-| [demo-neo4j](./demo-neo4j)                                   | a demo to integrate Neo4j graph database to implement a campus character relationship network. |
-| [demo-docker](./demo-docker)                                 | docker container.                                            |
-| [demo-multi-datasource-jpa](./demo-multi-datasource-jpa)     | a demo to implement JPA multi-datasource.                    |
-| [demo-multi-datasource-mybatis](./demo-multi-datasource-mybatis) | a demo to implement Mybatis multi-datasource by using an open source solution from Mybatis-Plus. |
-| [demo-sharding-jdbc](./demo-sharding-jdbc)                   | a demo to use `sharding-jdbc` to implement sub-database and sub-tables, while ORM uses Mybatis-Plus. |
-| [demo-tio](./demo-tio)                                       | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate t-io(a network programming framework like netty). |
-| demo-grpc                                                    | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate Google grpc, need to be configure tls/ssl, see [ISSUE#5](https://github.com/xkcoding/spring-boot-demo/issues/5). |
-| [demo-codegen](./demo-codegen)                               | a demo to integrate velocity template engine to implement code generator, improve development efficiency. |
-| [demo-graylog](./demo-graylog)                               | a demo to integrate graylog for unified log collection.      |
-| demo-sso                                                     | <span style="color:pink;">NOT FINISHED YET!</span> <br />a demo to integrate Single Sign On, see [ISSUE#12](https://github.com/xkcoding/spring-boot-demo/issues/12). |
-| [demo-ldap](./demo-ldap)                                     | a demo to integrate LDAP to use `spring-boot-starter-data-ldap` to implement  CURD operations and give the login demo, see [ISSUE#23](https://github.com/xkcoding/spring-boot-demo/issues/23), thanks [@fxbin](https://github.com/fxbin). |
-| [demo-dynamic-datasource](./demo-dynamic-datasource)         | a demo to add datasource dynamically, switch datasource dynamically. |
-| [demo-ratelimit-guava](./demo-ratelimit-guava)               | a demo to use use Guava RateLimiter to protect API  by standalone rate limiting. |
-| [demo-ratelimit-redis](./demo-ratelimit-redis)               | a demo to use Redis and Lua script implementation to protect API by distributed rate limiting. |
-| [demo-https](./demo-https)                                   | a demo to integrate HTTPS.                                   |
-| [demo-elasticsearch-rest-high-level-client](./demo-elasticsearch-rest-high-level-client) | a demo to integrate ElasticSearch 7.x version by using official Rest High Level Client to operate ES data. |
-| [demo-flyway](./demo-flyway)                                 | a demo to integrate Flyway to initialize tables and data in database, Flyway also support the sql script version control. |
-| [demo-ureport2](./demo-ureport2)                             | a demo to integrate Ureport2 to design the Chinese complex report file. |
+### Fundamentals, web, and packaging
 
-### Thanks
+| Module | Current contents |
+| --- | --- |
+| [demo-helloworld](./demo-helloworld) | Minimal Hello World web application |
+| [demo-properties](./demo-properties) | Typed configuration, profiles, and custom properties |
+| [demo-actuator](./demo-actuator) | Actuator endpoints and endpoint security |
+| [demo-admin](./demo-admin) | Spring Boot Admin aggregator: `admin-server` and `admin-client` |
+| [demo-logback](./demo-logback) | Logback configuration and logging |
+| [demo-log-aop](./demo-log-aop) | AOP-based web request logging |
+| [demo-exception-handler](./demo-exception-handler) | Global JSON and page exception handling |
+| [demo-async](./demo-async) | `@Async` tasks and executor configuration |
+| [demo-upload](./demo-upload) | Local and Qiniu file uploads |
+| [demo-websocket](./demo-websocket) | Server-status push over WebSocket |
+| [demo-websocket-socketio](./demo-websocket-socketio) | netty-socketio chat room |
+| [demo-https](./demo-https) | HTTPS and certificate configuration |
+| [demo-war](./demo-war) | WAR packaging for an external servlet container |
+| [demo-docker](./demo-docker) | Simple web application and Dockerfile |
 
-- <a href="https://www.jetbrains.com/?from=spring-boot-demo"><img src="http://static.xkcoding.com/spring-boot-demo/064312.jpg" width="100px" alt="jetbrains">**Thanks JetBrains Offer Open Source Free License**</a>
--  [Thanks MyBatisCodeHelper-Pro(The Best Code Generator Plugin) Offer Permanent Activation Code](https://gejun123456.github.io/MyBatisCodeHelper-Pro/#/?id=mybatiscodehelper-pro)
+### Templates and API documentation
 
-### License
+| Module | Current contents |
+| --- | --- |
+| [demo-template-freemarker](./demo-template-freemarker) | Freemarker views |
+| [demo-template-thymeleaf](./demo-template-thymeleaf) | Thymeleaf views |
+| [demo-template-beetl](./demo-template-beetl) | Beetl views |
+| [demo-template-enjoy](./demo-template-enjoy) | Enjoy views |
+| [demo-swagger](./demo-swagger) | Springfox Swagger 2 and Swagger UI |
+| [demo-swagger-beauty](./demo-swagger-beauty) | swagger-bootstrap-ui documentation |
 
-[MIT](http://opensource.org/licenses/MIT)
+### Data access, migrations, and generation
 
-Copyright (c) 2018 Yangkai.Shen
+| Module | Current contents |
+| --- | --- |
+| [demo-orm-jdbctemplate](./demo-orm-jdbctemplate) | JdbcTemplate and a generic DAO |
+| [demo-orm-jpa](./demo-orm-jpa) | Spring Data JPA |
+| [demo-orm-mybatis](./demo-orm-mybatis) | Native MyBatis starter |
+| [demo-orm-mybatis-mapper-page](./demo-orm-mybatis-mapper-page) | Generic Mapper and PageHelper |
+| [demo-orm-mybatis-plus](./demo-orm-mybatis-plus) | MyBatis-Plus, BaseMapper/Service, and ActiveRecord |
+| [demo-orm-beetlsql](./demo-orm-beetlsql) | BeetlSQL data access |
+| [demo-multi-datasource-jpa](./demo-multi-datasource-jpa) | Two JPA data sources |
+| [demo-multi-datasource-mybatis](./demo-multi-datasource-mybatis) | dynamic-datasource with MyBatis-Plus |
+| [demo-dynamic-datasource](./demo-dynamic-datasource) | Runtime data-source creation and switching |
+| [demo-sharding-jdbc](./demo-sharding-jdbc) | Sharding-JDBC with MyBatis-Plus |
+| [demo-flyway](./demo-flyway) | Flyway database migrations |
+| [demo-codegen](./demo-codegen) | MySQL metadata and Velocity code generation |
+
+### Caching, security, identity, and rate limiting
+
+| Module | Current contents |
+| --- | --- |
+| [demo-cache-redis](./demo-cache-redis) | Redis operations and Spring Cache |
+| [demo-cache-ehcache](./demo-cache-ehcache) | Local Ehcache caching |
+| [demo-rbac-security](./demo-rbac-security) | Spring Security, JWT, JPA, and Redis RBAC |
+| [demo-rbac-shiro](./demo-rbac-shiro) | Shiro/MyBatis-Plus RBAC skeleton with basic API/configuration only |
+| [demo-session](./demo-session) | Shared sessions with Spring Session and Redis |
+| [demo-oauth](./demo-oauth) | OAuth2 authorization-server and resource-server aggregator |
+| [demo-social](./demo-social) | JustAuth social login with Redis state |
+| [demo-ldap](./demo-ldap) | Spring Data LDAP CRUD and login |
+| [demo-ratelimit-guava](./demo-ratelimit-guava) | Local AOP + Guava RateLimiter |
+| [demo-ratelimit-redis](./demo-ratelimit-redis) | Distributed AOP + Redis + Lua rate limiting |
+
+### Messaging, RPC, and coordination
+
+| Module | Current contents |
+| --- | --- |
+| [demo-mq-rabbitmq](./demo-mq-rabbitmq) | Direct, Fanout, Topic, and delayed queues |
+| [demo-mq-kafka](./demo-mq-kafka) | Kafka producers and listeners |
+| [demo-mq-rocketmq](./demo-mq-rocketmq) | Spring Boot startup skeleton; no RocketMQ integration code yet |
+| [demo-zookeeper](./demo-zookeeper) | Curator and AOP distributed lock |
+| [demo-dubbo](./demo-dubbo) | `dubbo-common`, `dubbo-provider`, and `dubbo-consumer` |
+
+### Scheduling and operations
+
+| Module | Current contents |
+| --- | --- |
+| [demo-task](./demo-task) | Spring scheduled tasks |
+| [demo-task-quartz](./demo-task-quartz) | Quartz management, persistence, and UI |
+| [demo-task-xxl-job](./demo-task-xxl-job) | XXL-JOB executor and admin calls |
+| [demo-email](./demo-email) | Text, HTML, template, attachment, and inline-resource mail |
+| [demo-graylog](./demo-graylog) | Logback GELF output to Graylog |
+
+### Search and specialized databases
+
+| Module | Current contents |
+| --- | --- |
+| [demo-elasticsearch](./demo-elasticsearch) | Spring Data Elasticsearch indexes, queries, and aggregations |
+| [demo-elasticsearch-rest-high-level-client](./demo-elasticsearch-rest-high-level-client) | Elasticsearch 7.x REST High Level Client |
+| [demo-mongodb](./demo-mongodb) | Spring Data MongoDB CRUD |
+| [demo-neo4j](./demo-neo4j) | Neo4j campus relationship graph |
+
+### Workflow, reports, networking, and payments
+
+| Module | Current contents |
+| --- | --- |
+| [demo-ureport2](./demo-ureport2) | UReport2 designer and database-backed report storage |
+| [demo-activiti](./demo-activiti) | Activiti 7 startup, security, and MySQL configuration skeleton |
+| [demo-uflo](./demo-uflo) | Spring Boot startup skeleton; no UFLO integration code yet |
+| [demo-urule](./demo-urule) | Spring Boot startup skeleton; no URule integration code yet |
+| [demo-tio](./demo-tio) | Spring Boot startup skeleton; no t-io integration code yet |
+| [demo-pay](./demo-pay) | IJPay, Alipay SDK, and ZXing dependencies, but only an application startup skeleton |
+
+## Tests and limitations
+
+- Run tests per module. Several `@SpringBootTest` classes load the real
+  `application.yml` and therefore require a database or middleware service.
+- A root reactor build includes all external-service and skeleton modules; it
+  is not a dependency-free smoke test.
+- Legacy dependencies may require the configured Maven mirror or historical
+  upstream artifacts.
+- This documentation audit covered repository structure, POMs, configuration,
+  tests, and module docs; it does not claim end-to-end validation of all 66
+  leaf modules.
+
+## More documentation
+
+- `README.md` files inside module directories
+- [License](./LICENSE)
