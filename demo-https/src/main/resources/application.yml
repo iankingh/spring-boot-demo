@@ -1,5 +1,7 @@
 server:
   ssl:
+    # SECURITY: 此 tracked key store 及其密码仅供历史 demo 本机测试，禁止用于部署环境。
+    # 生成新的本机 fixture 请参考仓库根目录 SECURITY.md。
     # 证书路径
     key-store: classpath:server.keystore
     key-alias: tomcat

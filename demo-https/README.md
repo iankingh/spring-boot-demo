@@ -2,9 +2,12 @@
 
 > 此 demo 主要演示了 Spring Boot 如何集成 https
 
+> [!WARNING]
+> `src/main/resources/server.keystore` 包含私钥和已过期的自签名证书，只是为了保留历史 demo 的本机测试 fixture。配置中的密码也是公开的 demo 值；不得在正式环境、真实账号或受信任的 key store 中沿用。需要新本机证书时，请依照根目录的 [`SECURITY.md`](../SECURITY.md) 生成，不要覆盖 tracked fixture。
+
 ## 1. 生成证书
 
-首先使用 jdk 自带的 keytool 命令生成证书复制到项目的 `resources` 目录下（生成的证书一般在用户目录下 C:\Users\Administrator\server.keystore）
+新的本机测试证书请使用根目录的 `scripts/generate-demo-keystores.sh` 生成到 source tree 之外，再用 local-only 配置指向该文件并提供相符密码。不要覆盖或提交 `resources` 中保留的历史 fixture。
 
 > 自己生成的证书浏览器会有危险提示,去ssl网站上使用金钱申请则不会
 

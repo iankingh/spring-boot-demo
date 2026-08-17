@@ -5,6 +5,11 @@ v1.0, 2019-01-07
 
 spring boot oauth2 授权服务器，
 
+[WARNING]
+====
+`src/main/resources/oauth2.jks` 及源码中的公开密码只是已过期的本机测试 fixture，禁止用于签发正式 token 或任何部署环境。生成新的本机 key store 请参考仓库根目录的 link:../../SECURITY.md[SECURITY.md]，不要覆盖 tracked fixture。
+====
+
 - 授权码模式、密码模式、刷新令牌
 - 自定义 UserDetailService
 - 自定义 ClientDetailService

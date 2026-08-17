@@ -56,6 +56,8 @@ public class Oauth2AuthorizationTokenConfig {
      */
     @Bean
     public KeyPair keyPair() {
+        // SECURITY: tracked key store 及其公开密码仅供历史 demo 本机测试，禁止用于签发正式 token。
+        // 生成新的本机 fixture 请参考仓库根目录 SECURITY.md。
         KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("oauth2.jks"), "123456".toCharArray());
         return keyStoreKeyFactory.getKeyPair("oauth2");
     }
