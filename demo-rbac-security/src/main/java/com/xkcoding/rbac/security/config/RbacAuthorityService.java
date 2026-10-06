@@ -14,14 +14,15 @@ import com.xkcoding.rbac.security.vo.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -71,8 +72,13 @@ public class RbacAuthorityService {
                 .filter(permission -> StrUtil.isNotBlank(permission.getMethod())).collect(Collectors.toList());
 
             for (Permission btnPerm : btnPerms) {
-                AntPathRequestMatcher antPathMatcher = new AntPathRequestMatcher(btnPerm.getUrl(), btnPerm.getMethod());
-                if (antPathMatcher.matches(request)) {
+                HttpMethod method;
+                try {
+                    method = HttpMethod.valueOf(btnPerm.getMethod());
+                } catch (IllegalArgumentException exception) {
+                    continue;
+                }
+                if (PathPatternRequestMatcher.pathPattern(method, btnPerm.getUrl()).matches(request)) {
                     hasPermission = true;
                     break;
                 }
@@ -95,12 +101,7 @@ public class RbacAuthorityService {
         Multimap<String, String> urlMapping = allUrlMapping();
 
         for (String uri : urlMapping.keySet()) {
-            // 通过 AntPathRequestMatcher 匹配 url
-            // 可以通过 2 种方式创建 AntPathRequestMatcher
-            // 1：new AntPathRequestMatcher(uri,method) 这种方式可以直接判断方法是否匹配，因为这里我们把 方法不匹配 自定义抛出，所以，我们使用第2种方式创建
-            // 2：new AntPathRequestMatcher(uri) 这种方式不校验请求方法，只校验请求路径
-            AntPathRequestMatcher antPathMatcher = new AntPathRequestMatcher(uri);
-            if (antPathMatcher.matches(request)) {
+            if (PathPatternRequestMatcher.pathPattern(uri).matches(request)) {
                 if (!urlMapping.get(uri).contains(currentMethod)) {
                     throw new SecurityException(Status.HTTP_BAD_METHOD);
                 } else {
@@ -125,7 +126,7 @@ public class RbacAuthorityService {
 
         handlerMethods.forEach((k, v) -> {
             // 获取当前 key 下的获取所有URL
-            Set<String> url = k.getPatternsCondition().getPatterns();
+            Set<String> url = k.getPatternValues();
             RequestMethodsRequestCondition method = k.getMethodsCondition();
 
             // 为每个URL添加所有的请求方法

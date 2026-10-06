@@ -3,9 +3,9 @@ package com.xkcoding.rbac.security.model;
 import com.xkcoding.rbac.security.model.unionkey.UserRoleKey;
 import lombok.Data;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * <p>

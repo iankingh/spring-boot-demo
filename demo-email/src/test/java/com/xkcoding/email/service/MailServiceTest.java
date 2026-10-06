@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import java.net.URL;
 
 /**

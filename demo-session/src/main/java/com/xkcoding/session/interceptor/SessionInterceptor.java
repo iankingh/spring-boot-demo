@@ -2,11 +2,11 @@ package com.xkcoding.session.interceptor;
 
 import com.xkcoding.session.constants.Consts;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * <p>
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
  * @date Created in 2018-12-19 19:40
  */
 @Component
-public class SessionInterceptor extends HandlerInterceptorAdapter {
+public class SessionInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();

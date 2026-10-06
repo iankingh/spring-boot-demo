@@ -3,7 +3,7 @@ package com.xkcoding.orm.jpa.entity;
 import com.xkcoding.orm.jpa.entity.base.AbstractAuditModel;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.Date;
 

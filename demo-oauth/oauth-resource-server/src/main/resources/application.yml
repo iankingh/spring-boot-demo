@@ -21,7 +21,7 @@ security:
       id: oauth2
     client:
       client-id: oauth2
-      client-secret: oauth2
+      client-secret: ${DEMO_OAUTH_OAUTH_RESOURCE_SERVER_SRC_MAIN_RESOURCES_CLIENT_SECRET}
       access-token-uri: http://localhost:8080/oauth/token
       scope: READ
 

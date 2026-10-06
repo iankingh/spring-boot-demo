@@ -7,7 +7,7 @@ import com.xkcoding.rbac.security.SpringBootDemoRbacSecurityApplicationTests;
 import com.xkcoding.rbac.security.model.*;
 import com.xkcoding.rbac.security.model.unionkey.RolePermissionKey;
 import com.xkcoding.rbac.security.model.unionkey.UserRoleKey;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

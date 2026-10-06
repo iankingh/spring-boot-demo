@@ -9,7 +9,7 @@ import net.minidev.json.JSONArray;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 

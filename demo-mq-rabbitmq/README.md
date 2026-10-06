@@ -138,7 +138,7 @@ spring:
     host: localhost
     port: 5672
     username: guest
-    password: guest
+    password: ${DEMO_MQ_RABBITMQ_PASSWORD}
     virtual-host: /
     # 手动提交消息
     listener:

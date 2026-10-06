@@ -30,6 +30,7 @@ import java.io.OutputStream;
 @SpringBootTest
 @Slf4j
 public class CodeGenServiceTest {
+    // These integration examples target an operator-provided local test database only.
     @Autowired
     private CodeGenService codeGenService;
 

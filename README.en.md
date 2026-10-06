@@ -10,15 +10,18 @@ directories are startup skeletons only. This catalog reflects the current
 POMs, source, and configuration; it does not imply that every demo has been
 runtime-tested.
 
-## Baseline
+## Current baseline
 
-- Java 8 (the root POM compiles for `1.8`)
-- Spring Boot `2.1.0.RELEASE`
-- Maven 3.5+ (no Maven Wrapper is included)
+- Java 17 (the root POM compilation target is `17`)
+- Spring Boot `4.1.1`
+- Maven 3.6.3+ (no Maven Wrapper is included)
 - UTF-8
 
-This is a legacy stack. Prefer JDK 8; newer JDK or Maven releases may be
-incompatible with old plugins or dependencies.
+The historical baseline was Java 8 / Spring Boot `2.1.0.RELEASE`; the existing
+migration is no longer Java 8 compatible. The full-reactor CI job uses Java 17;
+the smoke matrix uses Java 17 and 25. Some modules retain
+legacy dependencies and configuration; the three smoke modules do not prove that
+the full reactor or external-service modules have completed migration.
 
 ## Quick start
 
@@ -186,6 +189,32 @@ where one exists.
 | [demo-pay](./demo-pay) | IJPay, Alipay SDK, and ZXing dependencies, but only an application startup skeleton |
 
 ## Tests and limitations
+
+### Java 17 / 25 smoke validation (2026-10-05)
+
+The existing Java 17 / Boot 4 migration is preserved, with the CI JDK and smoke
+command aligned to the current POM. Fresh tests and packages were executed using
+Temurin `17.0.9`, Homebrew OpenJDK `25.0.4.1`, and Maven `3.8.4`. All three
+modules below passed on both JDKs:
+
+```bash
+# JAVA_HOME points to Java 17 or 25; target remains Java 17, and mvn must be on PATH
+mvn -B -V -pl demo-helloworld,demo-properties,demo-exception-handler -am clean package
+```
+
+| Module | Fresh `clean package` | Tests actually executed |
+| --- | --- | --- |
+| `demo-helloworld` | Passed | 1, passed |
+| `demo-properties` | Passed | 1, passed |
+| `demo-exception-handler` | Passed | 1, passed |
+
+Java 8 was also tested: all three modules failed before tests because the
+compiler target and Boot 4 class files require Java 17. The passing results
+above do not imply Java 8 compatibility. The full-reactor CI package job still
+skips tests; neither that full build nor remote GitHub Actions was run locally.
+JDK 23+ no longer discovers classpath processors by default;
+`demo-exception-handler` explicitly configures the existing BOM-managed Lombok
+annotation processor instead of relying on implicit processing.
 
 - Run tests per module. Several `@SpringBootTest` classes load the real
   `application.yml` and therefore require a database or middleware service.

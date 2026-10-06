@@ -1,6 +1,6 @@
 package com.xkcoding.email.service;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 /**
  * <p>

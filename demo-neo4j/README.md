@@ -94,7 +94,7 @@ spring:
     neo4j:
       uri: bolt://localhost
       username: neo4j
-      password: admin
+      password: ${DEMO_NEO4J_PASSWORD}
       open-in-view: false
 ```
 

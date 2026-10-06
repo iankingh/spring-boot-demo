@@ -9,16 +9,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.Servlet;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.Servlet;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ import javax.servlet.Servlet;
  */
 @Configuration
 @ConditionalOnClass({Servlet.class, StandardServletMultipartResolver.class, MultipartConfigElement.class})
-@ConditionalOnProperty(prefix = "spring.http.multipart", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.servlet.multipart", name = "enabled", matchIfMissing = true)
 @EnableConfigurationProperties(MultipartProperties.class)
 public class UploadConfig {
     @Value("${qiniu.accessKey}")

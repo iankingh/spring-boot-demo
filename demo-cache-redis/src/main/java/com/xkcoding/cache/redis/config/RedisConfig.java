@@ -1,19 +1,20 @@
 package com.xkcoding.cache.redis.config;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 
 import java.io.Serializable;
 
@@ -26,7 +27,7 @@ import java.io.Serializable;
  * @date Created in 2018-11-15 16:41
  */
 @Configuration
-@AutoConfigureAfter(RedisAutoConfiguration.class)
+@AutoConfigureAfter(DataRedisAutoConfiguration.class)
 @EnableCaching
 public class RedisConfig {
 
@@ -37,7 +38,7 @@ public class RedisConfig {
     public RedisTemplate<String, Serializable> redisCacheTemplate(LettuceConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Serializable> template = new RedisTemplate<>();
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(redisJsonSerializer());
         template.setConnectionFactory(redisConnectionFactory);
         return template;
     }
@@ -49,8 +50,18 @@ public class RedisConfig {
     public CacheManager cacheManager(RedisConnectionFactory factory) {
         // 配置序列化
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
-        RedisCacheConfiguration redisCacheConfiguration = config.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())).serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+        RedisCacheConfiguration redisCacheConfiguration = config
+            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisJsonSerializer()));
 
         return RedisCacheManager.builder(factory).cacheDefaults(redisCacheConfiguration).build();
+    }
+
+    private GenericJacksonJsonRedisSerializer redisJsonSerializer() {
+        return GenericJacksonJsonRedisSerializer.builder()
+            .enableDefaultTyping(BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("com.xkcoding.cache.redis.entity.")
+                .build())
+            .build();
     }
 }

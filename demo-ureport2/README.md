@@ -29,9 +29,9 @@ server:
     context-path: /demo
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8&useSSL=true&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
     username: root
-    password: root
+    password: ${DEMO_UREPORT2_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 ureport:
   debug: false
@@ -234,8 +234,8 @@ http://127.0.0.1:8080/demo/ureport/designer
 
 ```yaml
 oss:
-  access-key: lengleng
-  secret-key: lengleng
+  access-key: ${DEMO_UREPORT2_ACCESS_KEY}
+  secret-key: ${DEMO_UREPORT2_SECRET_KEY}
   bucket-name: lengleng
   endpoint: http://minio.pig4cloud.com
 ```

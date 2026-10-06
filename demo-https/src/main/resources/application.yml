@@ -8,6 +8,6 @@ server:
     enabled: true
     key-store-type: JKS
     #与申请时输入一致
-    key-store-password: 123456
+    key-store-password: ${DEMO_HTTPS_SRC_MAIN_RESOURCES_KEY_STORE_PASSWORD}
     # 浏览器默认端口 和 80 类似
   port: 443

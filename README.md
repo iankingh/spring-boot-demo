@@ -7,15 +7,16 @@
 个子模块，因此仓库中共有 **66 个叶子模块**。模块成熟度不一，部分目录仅有启动
 骨架；本目录说明来自当前 POM、源码和配置，不表示所有示例都已完成运行时验证。
 
-## 技术基线
+## 当前技术基线
 
-- Java 8（根 POM 的编译目标为 `1.8`）
-- Spring Boot `2.1.0.RELEASE`
-- Maven 3.5+（仓库未提供 Maven Wrapper）
+- Java 17（根 POM 的编译目标为 `17`）
+- Spring Boot `4.1.1`
+- Maven 3.6.3+（仓库未提供 Maven Wrapper）
 - UTF-8
 
-该技术栈较旧。优先使用 JDK 8 构建；较新的 JDK 或 Maven 可能与旧插件、旧依赖
-不兼容。
+历史基线为 Java 8／Spring Boot `2.1.0.RELEASE`；已有迁移修改不再兼容 Java 8。
+CI 的全 reactor job 使用 Java 17，smoke matrix 使用 Java 17／25。模块仍保留部分历史依赖与配置，三个 smoke 模块的成功不表示
+整个 reactor 或依赖外部服务的模块已完成迁移与运行验证。
 
 ## 快速开始
 
@@ -67,8 +68,11 @@ cd demo-oauth/oauth-resource-server && mvn spring-boot:run
 - Dubbo 示例使用 ZooKeeper 注册中心
 - 社交登录、七牛云上传和支付示例需要自行申请第三方凭据
 
-仓库中的配置值仅是演示默认值，有些包含历史环境地址或占位信息。启动前请在本地
-覆盖连接地址和凭据，不要把真实密钥提交到仓库。多数 Web 示例默认使用 `8080`，
+配置中的密码和第三方 client secret 使用无默认值的环境变量占位符。运行模块前，
+请先为其配置文件中的每个占位符设置环境变量或使用不跟踪的本地配置；缺少凭据时
+应用不会获得内置的弱口令回退。不要把真实密钥提交到仓库。MySQL 示例启用 JDBC
+TLS，部署时还需正确配置服务端证书校验。安全说明和 keystore 处理见
+[`SECURITY.md`](./SECURITY.md)。多数 Web 示例默认使用 `8080`，
 同时启动多个模块时需要修改 `server.port`。特殊端口请以模块配置和 README 为准。
 
 ## 模块目录
@@ -179,6 +183,29 @@ cd demo-oauth/oauth-resource-server && mvn spring-boot:run
 | [demo-pay](./demo-pay) | 已声明 IJPay、支付宝 SDK 与 ZXing，但当前只有应用启动骨架 |
 
 ## 测试与已知限制
+
+### Java 17／25 smoke 验证（2026-10-05）
+
+保留现有 Java 17／Boot 4 升级，并将 CI 的 JDK 与 smoke 命令对齐当前 POM。
+使用 Temurin `17.0.9`、Homebrew OpenJDK `25.0.4.1` 和 Maven `3.8.4` 分别执行
+fresh tests/package，以下三个模块在两个 JDK 上都通过：
+
+```bash
+# JAVA_HOME 指向 Java 17 或 25；编译目标仍是 Java 17，mvn 必须在 PATH 中
+mvn -B -V -pl demo-helloworld,demo-properties,demo-exception-handler -am clean package
+```
+
+| 模块 | fresh `clean package` | 实际执行测试数 |
+| --- | --- | --- |
+| `demo-helloworld` | 通过 | 1，通过 |
+| `demo-properties` | 通过 | 1，通过 |
+| `demo-exception-handler` | 通过 | 1，通过 |
+
+先前也实测 Java 8，三个模块均在测试前失败：编译目标为 17，而 Boot 4
+类文件也要求 Java 17。上述通过结果不代表 Java 8 相容。CI 的全 reactor
+package job 仍跳过 tests；本次未执行全 reactor 或远端 GitHub Actions。
+JDK 23+ 默认不再自动发现 classpath processors；`demo-exception-handler` 已显式配置
+Lombok annotation processor，版本由现有 Boot BOM 管理，不依赖隐式 processing。
 
 - 测试命令应针对单个模块执行；不少 `@SpringBootTest` 会读取真实
   `application.yml`，可能要求数据库或中间件已经启动。

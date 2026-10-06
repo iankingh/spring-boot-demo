@@ -1,9 +1,6 @@
 package com.xkcoding.rbac.security.config;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.google.common.collect.Sets;
 import com.xkcoding.rbac.security.common.Status;
 import com.xkcoding.rbac.security.exception.SecurityException;
 import com.xkcoding.rbac.security.service.CustomUserDetailsService;
@@ -16,16 +13,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 /**
  * <p>
@@ -83,56 +80,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @return true - 忽略，false - 不忽略
      */
     private boolean checkIgnores(HttpServletRequest request) {
-        String method = request.getMethod();
-
-        HttpMethod httpMethod = HttpMethod.resolve(method);
-        if (ObjectUtil.isNull(httpMethod)) {
+        HttpMethod httpMethod;
+        try {
+            httpMethod = HttpMethod.valueOf(request.getMethod());
+        } catch (IllegalArgumentException exception) {
             httpMethod = HttpMethod.GET;
         }
 
-        Set<String> ignores = Sets.newHashSet();
+        if (HttpMethod.GET.equals(httpMethod) && matchesAny(customConfig.getIgnores().getGet(), httpMethod, request)) return true;
+        if (HttpMethod.PUT.equals(httpMethod) && matchesAny(customConfig.getIgnores().getPut(), httpMethod, request)) return true;
+        if (HttpMethod.HEAD.equals(httpMethod) && matchesAny(customConfig.getIgnores().getHead(), httpMethod, request)) return true;
+        if (HttpMethod.POST.equals(httpMethod) && matchesAny(customConfig.getIgnores().getPost(), httpMethod, request)) return true;
+        if (HttpMethod.PATCH.equals(httpMethod) && matchesAny(customConfig.getIgnores().getPatch(), httpMethod, request)) return true;
+        if (HttpMethod.TRACE.equals(httpMethod) && matchesAny(customConfig.getIgnores().getTrace(), httpMethod, request)) return true;
+        if (HttpMethod.DELETE.equals(httpMethod) && matchesAny(customConfig.getIgnores().getDelete(), httpMethod, request)) return true;
+        if (HttpMethod.OPTIONS.equals(httpMethod) && matchesAny(customConfig.getIgnores().getOptions(), httpMethod, request)) return true;
 
-        switch (httpMethod) {
-            case GET:
-                ignores.addAll(customConfig.getIgnores().getGet());
-                break;
-            case PUT:
-                ignores.addAll(customConfig.getIgnores().getPut());
-                break;
-            case HEAD:
-                ignores.addAll(customConfig.getIgnores().getHead());
-                break;
-            case POST:
-                ignores.addAll(customConfig.getIgnores().getPost());
-                break;
-            case PATCH:
-                ignores.addAll(customConfig.getIgnores().getPatch());
-                break;
-            case TRACE:
-                ignores.addAll(customConfig.getIgnores().getTrace());
-                break;
-            case DELETE:
-                ignores.addAll(customConfig.getIgnores().getDelete());
-                break;
-            case OPTIONS:
-                ignores.addAll(customConfig.getIgnores().getOptions());
-                break;
-            default:
-                break;
-        }
+        return matchesAny(customConfig.getIgnores().getPattern(), request);
+    }
 
-        ignores.addAll(customConfig.getIgnores().getPattern());
+    private boolean matchesAny(List<String> patterns, HttpServletRequest request) {
+        return patterns.stream()
+            .anyMatch(pattern -> PathPatternRequestMatcher.pathPattern(pattern).matches(request));
+    }
 
-        if (CollUtil.isNotEmpty(ignores)) {
-            for (String ignore : ignores) {
-                AntPathRequestMatcher matcher = new AntPathRequestMatcher(ignore, method);
-                if (matcher.matches(request)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+    private boolean matchesAny(List<String> patterns, HttpMethod method, HttpServletRequest request) {
+        return patterns.stream()
+            .anyMatch(pattern -> PathPatternRequestMatcher.pathPattern(method, pattern).matches(request));
     }
 
 }

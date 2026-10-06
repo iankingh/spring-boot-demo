@@ -83,7 +83,7 @@ spring:
   security:
     user:
       name: xkcoding
-      password: 123456
+      password: ${DEMO_ACTUATOR_PASSWORD}
 management:
   # 端点信息接口使用的端口，为了和主系统接口使用的端口进行分离
   server:

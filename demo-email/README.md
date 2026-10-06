@@ -84,7 +84,7 @@ spring:
     port: 465
     username: spring-boot-demo@xkcoding.com
     # 使用 jasypt 加密密码，使用com.xkcoding.email.PasswordTest.testGeneratePassword 生成加密密码，替换 ENC(加密密码)
-    password: ENC(OT0qGOpXrr1Iog1W+fjOiIDCJdBjHyhy)
+    password: ${DEMO_EMAIL_SMTP_PASSWORD}
     protocol: smtp
     test-connection: true
     default-encoding: UTF-8
@@ -97,7 +97,7 @@ spring:
 # 为 jasypt 配置解密秘钥
 jasypt:
   encryptor:
-    password: spring-boot-demo
+    password: ${DEMO_EMAIL_JASYPT_ENCRYPTOR_PASSWORD}
 
 ```
 

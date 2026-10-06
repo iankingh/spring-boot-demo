@@ -23,7 +23,7 @@ spring:
       # 是否启用 swagger 登录验证
       filter-plugin: true
       username: xkcoding
-      password: 123456
+      password: ${DEMO_SWAGGER_BEAUTY_SRC_MAIN_RESOURCES_PASSWORD}
     global-response-messages:
       GET[0]:
         code: 400

@@ -1,14 +1,15 @@
 package com.xkcoding.rbac.security.config;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 
 import java.io.Serializable;
 
@@ -21,7 +22,7 @@ import java.io.Serializable;
  * @date Created in 2018-12-11 15:16
  */
 @Configuration
-@AutoConfigureAfter(RedisAutoConfiguration.class)
+@AutoConfigureAfter(DataRedisAutoConfiguration.class)
 @EnableCaching
 public class RedisConfig {
 
@@ -32,8 +33,16 @@ public class RedisConfig {
     public RedisTemplate<String, Serializable> redisCacheTemplate(LettuceConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Serializable> template = new RedisTemplate<>();
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(redisJsonSerializer());
         template.setConnectionFactory(redisConnectionFactory);
         return template;
+    }
+
+    private GenericJacksonJsonRedisSerializer redisJsonSerializer() {
+        return GenericJacksonJsonRedisSerializer.builder()
+            .enableDefaultTyping(BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("com.xkcoding.rbac.security.model.")
+                .build())
+            .build();
     }
 }

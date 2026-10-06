@@ -19,7 +19,7 @@ spring:
   security:
     user:
       name: xkcoding
-      password: 123456
+      password: ${DEMO_ADMIN_ADMIN_CLIENT_SRC_MAIN_RESOURCES_PASSWORD}
 management:
   endpoint:
     health:

@@ -3,7 +3,7 @@ package com.xkcoding.task.quartz.entity.form;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * <p>

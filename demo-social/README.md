@@ -367,31 +367,31 @@ justauth:
   type:
     qq:
       client-id: 10******85
-      client-secret: 1f7d************************d629e
+      client-secret: ${DEMO_SOCIAL_QQ_CLIENT_SECRET}
       redirect-uri: http://oauth.xkcoding.com/demo/oauth/qq/callback
     github:
       client-id: 2d25******d5f01086
-      client-secret: 5a2919b************************d7871306d1
+      client-secret: ${DEMO_SOCIAL_GITHUB_CLIENT_SECRET}
       redirect-uri: http://oauth.xkcoding.com/demo/oauth/github/callback
     wechat:
       client-id: wxdcb******4ff4
-      client-secret: b4e9dc************************a08ed6d
+      client-secret: ${DEMO_SOCIAL_WECHAT_CLIENT_SECRET}
       redirect-uri: http://oauth.xkcoding.com/demo/oauth/wechat/callback
     google:
       client-id: 716******17-6db******vh******ttj320i******userco******t.com
-      client-secret: 9IBorn************7-E
+      client-secret: ${DEMO_SOCIAL_GOOGLE_CLIENT_SECRET}
       redirect-uri: http://oauth.xkcoding.com/demo/oauth/google/callback
     microsoft:
       client-id: 7bdce8******************e194ad76c1b
-      client-secret: Iu0zZ4************************tl9PWan_.
+      client-secret: ${DEMO_SOCIAL_MICROSOFT_CLIENT_SECRET}
       redirect-uri: https://oauth.xkcoding.com/demo/oauth/microsoft/callback
     mi:
       client-id: 288************2994
-      client-secret: nFeTt89************************==
+      client-secret: ${DEMO_SOCIAL_MI_CLIENT_SECRET}
       redirect-uri: http://oauth.xkcoding.com/demo/oauth/mi/callback
     wechat_enterprise:
       client-id: ww58******f3************fbc
-      client-secret: 8G6PCr00j************************rgk************AyzaPc78
+      client-secret: ${DEMO_SOCIAL_WECHAT_ENTERPRISE_CLIENT_SECRET}
       redirect-uri: http://oauth.xkcoding.com/demo/oauth/wechat_enterprise/callback
       agent-id: 1*******2
   cache:
@@ -490,6 +490,5 @@ public class OauthController {
 9. 谷歌Oauth2文档：https://developers.google.com/identity/protocols/OpenIDConnect
 10. 微软Oauth2文档：https://docs.microsoft.com/zh-cn/graph/auth-v2-user
 11. 小米开放平台账号服务文档：https://dev.mi.com/console/doc/detail?pId=707
-
 
 

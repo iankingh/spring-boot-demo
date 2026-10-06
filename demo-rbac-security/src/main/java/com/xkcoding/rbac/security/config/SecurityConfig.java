@@ -7,16 +7,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.util.ArrayList;
+import java.util.List;
 /**
  * <p>
  * Security 配置
@@ -28,7 +36,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableConfigurationProperties(CustomConfig.class)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
     @Autowired
     private CustomConfig customConfig;
 
@@ -39,6 +47,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
+    private RbacAuthorityService rbacAuthorityService;
+
+    @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
@@ -46,87 +57,54 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailsService);
+        provider.setPasswordEncoder(encoder());
+        return provider;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customUserDetailsService).passwordEncoder(encoder());
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        // @formatter:off
-        http.cors()
-                // 关闭 CSRF
-                .and().csrf().disable()
-                // 登录行为由自己实现，参考 AuthController#login
-                .formLogin().disable()
-                .httpBasic().disable()
-
-                // 认证请求
-                .authorizeRequests()
-                // 所有请求都需要登录访问
-                .anyRequest()
-                .authenticated()
-                // RBAC 动态 url 认证
-                .anyRequest()
-                .access("@rbacAuthorityService.hasPermission(request,authentication)")
-
-                // 登出行为由自己实现，参考 AuthController#logout
-                .and().logout().disable()
-                // Session 管理
-                .sessionManagement()
-                // 因为使用了JWT，所以这里不管理Session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-                // 异常处理
-                .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler);
-        // @formatter:on
-
-        // 添加自定义 JWT 过滤器
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(Customizer.withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .logout(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(accessDeniedHandler))
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(ignoredRequestMatchers()).permitAll()
+                .anyRequest().access((authentication, context) -> {
+                    var current = authentication.get();
+                    return new AuthorizationDecision(
+                        current != null && rbacAuthorityService.hasPermission(context.getRequest(), current));
+                }));
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 
-    /**
-     * 放行所有不需要登录就可以访问的请求，参见 AuthController
-     * 也可以在 {@link #configure(HttpSecurity)} 中配置
-     * {@code http.authorizeRequests().antMatchers("/api/auth/**").permitAll()}
-     */
-    @Override
-    public void configure(WebSecurity web) {
-        WebSecurity and = web.ignoring().and();
+    private RequestMatcher[] ignoredRequestMatchers() {
+        IgnoreConfig ignores = customConfig.getIgnores();
+        List<RequestMatcher> matchers = new ArrayList<>();
+        addMatchers(matchers, HttpMethod.GET, ignores.getGet());
+        addMatchers(matchers, HttpMethod.POST, ignores.getPost());
+        addMatchers(matchers, HttpMethod.DELETE, ignores.getDelete());
+        addMatchers(matchers, HttpMethod.PUT, ignores.getPut());
+        addMatchers(matchers, HttpMethod.HEAD, ignores.getHead());
+        addMatchers(matchers, HttpMethod.PATCH, ignores.getPatch());
+        addMatchers(matchers, HttpMethod.OPTIONS, ignores.getOptions());
+        addMatchers(matchers, HttpMethod.TRACE, ignores.getTrace());
+        ignores.getPattern().forEach(pattern -> matchers.add(PathPatternRequestMatcher.pathPattern(pattern)));
+        return matchers.toArray(RequestMatcher[]::new);
+    }
 
-        // 忽略 GET
-        customConfig.getIgnores().getGet().forEach(url -> and.ignoring().antMatchers(HttpMethod.GET, url));
-
-        // 忽略 POST
-        customConfig.getIgnores().getPost().forEach(url -> and.ignoring().antMatchers(HttpMethod.POST, url));
-
-        // 忽略 DELETE
-        customConfig.getIgnores().getDelete().forEach(url -> and.ignoring().antMatchers(HttpMethod.DELETE, url));
-
-        // 忽略 PUT
-        customConfig.getIgnores().getPut().forEach(url -> and.ignoring().antMatchers(HttpMethod.PUT, url));
-
-        // 忽略 HEAD
-        customConfig.getIgnores().getHead().forEach(url -> and.ignoring().antMatchers(HttpMethod.HEAD, url));
-
-        // 忽略 PATCH
-        customConfig.getIgnores().getPatch().forEach(url -> and.ignoring().antMatchers(HttpMethod.PATCH, url));
-
-        // 忽略 OPTIONS
-        customConfig.getIgnores().getOptions().forEach(url -> and.ignoring().antMatchers(HttpMethod.OPTIONS, url));
-
-        // 忽略 TRACE
-        customConfig.getIgnores().getTrace().forEach(url -> and.ignoring().antMatchers(HttpMethod.TRACE, url));
-
-        // 按照请求格式忽略
-        customConfig.getIgnores().getPattern().forEach(url -> and.ignoring().antMatchers(url));
-
+    private void addMatchers(List<RequestMatcher> matchers, HttpMethod method, List<String> patterns) {
+        patterns.forEach(pattern -> matchers.add(PathPatternRequestMatcher.pathPattern(method, pattern)));
     }
 }

@@ -7,7 +7,7 @@ import com.xkcoding.rbac.security.common.BaseException;
 import com.xkcoding.rbac.security.common.IStatus;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**

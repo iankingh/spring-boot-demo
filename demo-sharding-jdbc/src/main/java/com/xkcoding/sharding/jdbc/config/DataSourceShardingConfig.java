@@ -79,16 +79,16 @@ public class DataSourceShardingConfig {
         // 配置第一个数据源
         HikariDataSource ds0 = new HikariDataSource();
         ds0.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds0.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8");
-        ds0.setUsername("root");
-        ds0.setPassword("root");
+        ds0.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8&sslMode=VERIFY_IDENTITY&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8");
+        ds0.setUsername(requiredEnvironmentVariable("DEMO_SHARDING_DB_USERNAME"));
+        ds0.setPassword(requiredEnvironmentVariable("DEMO_SHARDING_DB_PASSWORD"));
 
         // 配置第二个数据源
         HikariDataSource ds1 = new HikariDataSource();
         ds1.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds1.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/spring-boot-demo-2?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8");
-        ds1.setUsername("root");
-        ds1.setPassword("root");
+        ds1.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/spring-boot-demo-2?useUnicode=true&characterEncoding=UTF-8&sslMode=VERIFY_IDENTITY&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8");
+        ds1.setUsername(requiredEnvironmentVariable("DEMO_SHARDING_DB_USERNAME"));
+        ds1.setPassword(requiredEnvironmentVariable("DEMO_SHARDING_DB_PASSWORD"));
 
         dataSourceMap.put("ds0", ds0);
         dataSourceMap.put("ds1", ds1);
@@ -102,4 +102,11 @@ public class DataSourceShardingConfig {
         return new CustomSnowflakeKeyGenerator(snowflake);
     }
 
+    private String requiredEnvironmentVariable(String name) {
+        String value = System.getenv(name);
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalStateException("Set the required environment variable " + name);
+        }
+        return value;
+    }
 }

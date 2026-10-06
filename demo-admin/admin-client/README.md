@@ -89,7 +89,7 @@ spring:
   security:
     user:
       name: xkcoding
-      password: 123456
+      password: ${DEMO_ADMIN_ADMIN_CLIENT_PASSWORD}
 management:
   endpoint:
     health:
@@ -101,4 +101,3 @@ management:
         # 设置端点暴露的哪些内容，默认["health","info"]，设置"*"代表暴露所有可访问的端点
         include: "*"
 ```
-

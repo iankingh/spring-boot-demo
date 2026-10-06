@@ -6,9 +6,9 @@ spring:
   datasource:
     hikari:
       username: root
-      password: root
+      password: ${DEMO_RBAC_SECURITY_SRC_MAIN_RESOURCES_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8&sslMode=VERIFY_IDENTITY&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
   jpa:
     show-sql: true
     generate-ddl: false

@@ -21,9 +21,9 @@ $ git clone https://github.com/xuxueli/xxl-job.git
 ```properties
 server.port=18080
 
-spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_job?Unicode=true&characterEncoding=UTF-8&useSSL=false
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_job?Unicode=true&characterEncoding=UTF-8&useSSL=true
 spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.password=${DEMO_TASK_XXL_JOB_SPRING_DATASOURCE_PASSWORD}
 ```
 
 ### 1.3. 修改日志配置文件 logback.xml

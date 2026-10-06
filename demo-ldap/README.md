@@ -78,7 +78,7 @@ spring:
     urls: ldap://localhost:389
     base: dc=example,dc=org
     username: cn=admin,dc=example,dc=org
-    password: admin
+    password: ${DEMO_LDAP_PASSWORD}
 ```
 
 ## Person.java

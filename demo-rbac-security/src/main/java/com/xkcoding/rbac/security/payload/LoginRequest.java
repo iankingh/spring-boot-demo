@@ -2,7 +2,7 @@ package com.xkcoding.rbac.security.payload;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * <p>

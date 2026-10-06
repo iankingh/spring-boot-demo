@@ -2,10 +2,10 @@ package com.xkcoding.dynamic.datasource.model;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -63,7 +63,7 @@ public class DatasourceConfig implements Serializable {
      * @return JDBC URL
      */
     public String buildJdbcUrl() {
-        return String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false", this.host, this.port, this.database);
+        return String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&sslMode=VERIFY_IDENTITY", this.host, this.port, this.database);
     }
 
 }
